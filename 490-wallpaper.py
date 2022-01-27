@@ -11,12 +11,12 @@ myCanvas = tkinter.Canvas(win)
 myCanvas.pack()
 
 # write one pixel to the image
-def plot_pixel(x,y,r,canvasName):
+def plot_pixel(x,y,r,color,canvasName):
     x0 = x - r
     y0 = y - r
     x1 = x - r
     y1 = y - r
-    return canvasName.create_oval(x0,y0,x1,y1)
+    return canvasName.create_oval(x0,y0,x1,y1,fill=color,outline=color,width=0)
     
 # our program - wallpaper | red yellow blue for V3
 def wallpaper():
@@ -29,7 +29,13 @@ def wallpaper():
             y = cornb + j * side/10
             c = math.floor(x * x + y * y)
             if (c%2 == 0):
-                plot_pixel(i, j, 1, myCanvas)
+                if (c%3 == 0):
+                    color = "blue"
+                elif (c%7 == 0):
+                    color = "yellow"
+                else:
+                    color = "red"
+                plot_pixel(i, j, 1, color, myCanvas)
 
 # calling our wallpaper function
 wallpaper()

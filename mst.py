@@ -3,18 +3,18 @@
 # import necessary packages
 import csv
 import timeit
+import threading
 
 # THINGS TO ADD
 # add a funciton to import a csv
 # improve the performance of the code (in some way)
 # benchmark the code before and after the performance boost
 
-
 # graph class
 class graph:
     def __init__(self) -> None:
         pass
-    
+
     # read function graph.read([])
     def read(self,verticies):
         self.data = verticies
@@ -45,6 +45,8 @@ class graph:
         for i in range(len(E)):
             if val[2] > E[i][2]:
                 val = E[i]
+            elif E[i][2] == 1:
+                return val
         return val
 
     # process the data
@@ -74,21 +76,12 @@ class graph:
         print("Minimum Spanning Tree length is:",length)
 
 
+
 # main
-
-"""g.read([
-    [0,2,6,12,4],
-    [2,0,10,5,2],
-    [6,10,0,4,1],
-    [12,5,4,0,5],
-    [4,2,1,5,0]
-])"""
-
 def benchmark():
-    print("MST V1:")
+    print("MST V2:")
     g = graph()
     g.readCSV('graph.csv')
     g.process()
 
 print(timeit.Timer(benchmark).timeit(number=1))
-

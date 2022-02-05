@@ -3,12 +3,6 @@
 # import necessary packages
 import csv
 import timeit
-import threading
-
-# THINGS TO ADD
-# add a funciton to import a csv
-# improve the performance of the code (in some way)
-# benchmark the code before and after the performance boost
 
 # graph class
 class graph:

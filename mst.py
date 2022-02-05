@@ -2,6 +2,7 @@
 
 # import necessary packages
 import csv
+import timeit
 
 # THINGS TO ADD
 # add a funciton to import a csv
@@ -73,12 +74,8 @@ class graph:
         print("Minimum Spanning Tree length is:",length)
 
 
-
 # main
 
-# create the object
-g = graph()
-# read in the data
 """g.read([
     [0,2,6,12,4],
     [2,0,10,5,2],
@@ -86,7 +83,12 @@ g = graph()
     [12,5,4,0,5],
     [4,2,1,5,0]
 ])"""
-# process the tree and find the MSP
-g.readCSV('graph.csv')
-#g.display()
-g.process()
+
+def benchmark():
+    print("MST V1:")
+    g = graph()
+    g.readCSV('graph.csv')
+    g.process()
+
+print(timeit.Timer(benchmark).timeit(number=1))
+

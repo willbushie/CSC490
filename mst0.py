@@ -75,7 +75,7 @@ class graph:
 def benchmark():
     print("MST V2:")
     g = graph()
-    g.readCSV('graph.csv')
+    g.readCSV('graph1.csv')
     g.process()
 
 print(timeit.Timer(benchmark).timeit(number=1))

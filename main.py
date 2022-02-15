@@ -1,7 +1,26 @@
-# testing
+# CSC490 - Time and Space Complexity
+
+import random
+from time import sleep
 import timeit
 from memory_profiler import profile
-import random
+import sys 
+sys.setrecursionlimit(1000000)
+
+"""
+objectives:
+1. 
+    X Create a function to generate 1,000,000 element (in a list). 
+    X Only two of the values can be repeated and positions are randomly placed each time.
+2. 
+    X Create own implementation of STOR and SCAN. 
+    X Benchmark their performance by measuring execution time. 
+    X Source data from objective one.
+3. 
+    X Create a data structure (dictionary) that uses less memory in constructing array B in STOR.
+    X Update STOR and compare the memory usage. 
+    Use test data which has max number equal to 2,000,000.
+"""
 
 class Node():
     def __init__(self,key):
@@ -44,8 +63,8 @@ def generate(length):
     return list
 
 @profile
-# old stor aglorithm
-def STOR1(list):
+# stor aglorithm
+def STOR(list):
     hold = [0] * (len(list))
     for index in range(0,len(list)-1):
         #print(f"checking {index}")
@@ -55,45 +74,22 @@ def STOR1(list):
         else:
             hold[list[index]] = 1
 
-@profile
-# updated use of python array features
-def STOR2(list):
-    hold = []
-    for index in range(0,len(list)):
-        if list[index] in hold:
-            print(list[index],index)
-            return
-        else:
-            hold.append(list[index])
-
-@profile
-# third attempt at the STOR algo
-def STOR3(list):
-    root = None
-    for index in range(0,len(list)):
-        if search(root,list[index]) == True:
-            print(list[index],index)
-            return
-        else:
-            root = insert(root,list[index])
-
-src = generate(1000000)
+#@profile
+# scan algorithm
+def SCAN(list):
+    for count in range(len(list)):
+        print(f"checking {count}")
+        for inner in range(count+1,len(list)):
+            if list[count] == list[inner]:
+                print(count,inner)
+                return
 
 def driver():
-    STOR1(src)
-    STOR2(src)
-    STOR3(src)
+    data = generate(1000000)
+    sleep(5)
+    STOR(data)
+    #SCAN(data)
 
-def benchmarkSTOR1():
-    STOR1(src)
-def benchmarkSTOR2():
-    STOR2(src)
-def benchmarkSTOR3():
-    STOR3(src)
 
-# memory profiler
 #driver()
-# timing them all
-print("STOR1 Time: ",timeit.Timer(benchmarkSTOR1).timeit(number=1))
-print("STOR2 Time: ",timeit.Timer(benchmarkSTOR2).timeit(number=1))
-print("STOR3 Time: ",timeit.Timer(benchmarkSTOR3).timeit(number=1))
+print("SCOR Results: ",timeit.Timer(driver).timeit(number=1))

@@ -1,11 +1,10 @@
-# CSC490 - Heapsort Benchmarking assignment
+# CSC490 - Merge Sort Benchmarking assignment
 
 """
 Objectives:
-X    1. Implement HeapSort with a MinHeap Tree.
-X    2. Submit a benchmark of execution time and memory using a list of 100,000 items.
-X    3. Compare execution time of HeapSort with Selection Sort, Insertion Sort, and Buble Sort 
-        using a list of 10,000 elements. 
+X    1. Implement Merge Sort algorithm.
+X    2. Compare performance between Merge, Selection, Bubble, Insertion, Heap using 1000 elements.
+X    3. Explain which algorithm I prefer and why. 
 """
 
 # import modules
@@ -181,20 +180,72 @@ def insertionSort(list):
     #print(list)
     return list
 
+# merge sort algorithm
+@profile
+def mergeSort(list):
+    if len(list) > 1:
+        middle = len(list) // 2
+        left = list[:middle]
+        right = list[middle:]
+        mergeSort(left)
+        mergeSort(right)
+        i = j = k = 0
+        while i < len(left) and j < len(right):
+            if left[i] < right[j]:
+                list[k] = left[i]
+                i += 1
+            else:
+                list[k] = right[j]
+                j += 1
+            k += 1
+        while i < len(left):
+            list[k] = left[i]
+            i += 1
+            k += 1
+        while j < len(right):
+            list[k] = right[j]
+            j += 1
+            k += 1
+
+
 # benchmark funcitons for all of the sorting methods using the same input data
 data = generate(10000)
 def benchmarkSS():
-    selectionSort(data)
+    #print("selection sort")
+    #print("data before: ", data)
+    selectionSort(list(data))
+    #print("data after: ", data)
 def benchmarkBS():
-    bubbleSort(data)
+    #print("bubble sort")
+    #print("data before: ", data)
+    bubbleSort(list(data))
+    #print("data after: ", data)
 def benchmarkIS():
-    insertionSort(data)
+    #print("insertion sort")
+    #print("data before: ", data)
+    insertionSort(list(data))
+    #print("data after: ", data)
 def benchmarkHS():
-    array = HeapSort(data)
-    return array
+    #print("heap sort")
+    #print("data before: ", data)
+    array = HeapSort(list(data))
+    #print("data after: ", data)
+def benchmarkMS():
+    #print("merge sort")
+    #print("data before: ", data)
+    mergeSort(list(data))
+    #print("data after: ", data)
+
+# calling benchmarking functions, without benchmarking the algorithms
+#benchmarkSS()
+#benchmarkBS()
+#benchmarkIS()
+#benchmarkHS()
+#benchmarkMS()
 
 # calling benchmarks for time and memory usage
-print("Selection Sort Results (10,000): ",timeit.Timer(benchmarkSS).timeit(number=1))
-print("Bubble Sort Results (10,000): ",timeit.Timer(benchmarkBS).timeit(number=1))
-print("Insertion Sort Results (10,000): ",timeit.Timer(benchmarkIS).timeit(number=1))
-print("Heap Sort Results (10,000): ",timeit.Timer(benchmarkHS).timeit(number=1))
+print("Selection Sort Results (1,000): ",timeit.Timer(benchmarkSS).timeit(number=1))
+print("Bubble Sort Results (1,000): ",timeit.Timer(benchmarkBS).timeit(number=1))
+print("Insertion Sort Results (1,000): ",timeit.Timer(benchmarkIS).timeit(number=1))
+print("Heap Sort Results (1,000): ",timeit.Timer(benchmarkHS).timeit(number=1))
+print("Merge Sort Results (1,000): ",timeit.Timer(benchmarkMS).timeit(number=1))

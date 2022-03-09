@@ -1,91 +1,167 @@
-# CSC490 - Merge Sort Benchmarking assignment
+# CSC490 - String Searching Algorithm Benchmarking
 
 """
 Objectives:
-X    1. Implement binary search tree in python. Including the functions:
-X        a. Insert
-X        b. Inorder Traversal
-X        c. Search
-X    2. Insert a random array from 0 to 10,000 to tree. 
-X    3. Benchmark the time of searching a number comparing to searching in a sequential ordered array.
+X    1. Read in the provided text file.
+X    2. Benchmark each algorithm
+X        a. Brute Force
+X        b. KMP
+X        c. Trie
 """
 
-# import modules
-import random
-import timeit
+# imports
 from memory_profiler import profile
+import timeit
 
-# generate random array of passed size
-def generate(size):
-    array = []
-    for count in range(size):
-        array.append(count)
-    random.shuffle(array)
-    return array
 
-class Node():
-    def __init__(self,key):
+# test data
+texts = "TWO ROADS DIVERGED IN A YELLOW WOOD"
+pat = "ROADS"
+
+# brute force implementation
+@profile
+def BrutalForce(text, pattern):
+    m = len(pattern)
+    n = len(text)
+    if m > n:
+        return 0
+    for i in range(n - m + 1):
+        k = 0
+        while k < m:
+            if text[i + k] == pattern[k]:
+                k += 1
+            else:
+                break
+        if k == m:
+            print("Pattern found at index ", i)
+
+# KMP implementation
+@profile
+def KMP(text, pattern):
+    m = len(pattern)
+    n = len(text)
+    if m > n:
+        return 0;
+    i = 0
+    while i < n - m + 1:
+        dict = KMP_sub(text, pattern, i)
+        if dict["pass"] is True:
+            print("Pattern found at index ", i)
+        i += dict["next"]
+
+# KMP helper function
+def KMP_sub(text, pattern, index):  #return a dictionary {"pass": True, "next": 1}
+    m = len(pattern)
+    n = len(text)
+    arr = [True] * m    #arr[i] holds if pattern matches 0 holds all matches, 1 holds text[index + 1:] matches
+    for i in range(m):
+        for j in range(i + 1):
+            if arr[j] is True and (index + i + j >= n or text[index + i + j] != pattern[i]):
+                arr[j] = False
+    dict = {
+        "pass": arr[0],
+        "next": m
+    }
+    for i in range(1, m):
+        if arr[i] is True:
+            dict["next"] = i
+            break
+    return dict
+
+# node class for the Trie implementation
+class Node:
+    def __init__(self, key):
         self.key = key
-        self.right = None
-        self.left = None
+        self.children = {}
+        self.index = []
 
-def insert(node,key):
-    if node is None:
-        return Node(key)
-    if key < node.key:
-        node.left = insert(node.left,key)
-    else:
-        node.right = insert(node.right,key)
-    return node
-
-def search(root,key):
-    if root is not None:
-        if root.key == key:
-            return True
-        elif root.key > key:
-            return search(root.left,key)
-        elif root.key < key: 
-            return search(root.right,key)
-    else:
-        return False
-
-def inOrderTraverse(root):
-    if root: 
-        inOrderTraverse(root.left) 
-        print(root.key,end=" ")
-        inOrderTraverse(root.right)
-
-def buildTree(list):
+# Trie implementation
+class Trie:
     root = None
-    for index in range(0,len(list)):
-        root = insert(root,list[index])
-    return root
+    def __init__(self):
+        self.root = Node(None)
 
-def searchList(list,key):
-    for index in range(len(list)):
-        if list[index] is key:
-            return True
-    return False
+    def search(self, pattern):
+        if pattern[0] in self.root.children.keys():
+            return self.searchNode(self.root.children[pattern[0]], pattern)
+        else:
+            return None
 
-# benchmark funcitons for all of the sorting methods using the same input data
-data = generate(100000)
-find = random.randint(0,100000-1)
-root = buildTree(list(data))
+    @profile
+    def searchNode(self, node, pattern):
+        if len(pattern) == 1:
+            if node.key == pattern[0]:
+                return node
+            else:
+                return None
+        else:
+            if node.key == pattern[0] and pattern[1] in node.children.keys():
+                newString = pattern[1:]
+                return self.searchNode(node.children[pattern[1]], newString)
+            else:
+                return None
 
-@profile
-def benchmarkBST():
-    search(root,find)
-    #print("BST complete")
+    def insert(self, str, index):
+        currNode = self.root
+        for i in range(len(str)):
+            newStr = str[:i + 1]
+            if i == 0:
+                found = self.search(newStr)
+                if found is None:
+                    node = Node(newStr)
+                    currNode.children[newStr] = node
+                    currNode = node
+                else:
+                    currNode = found
+            else:
+                key = str[i]
+                if key in currNode.children.keys():
+                    currNode = currNode.children[key]
+                else:
+                    node = Node(key)
+                    currNode.children[key] = node
+                    currNode = node
+        currNode.index.append(index)
 
-@profile
-def benchmarkSOA():
-    searchList(list(data),find)
-    #print("Sequential Sort complete")
+    def patchInsert(self, text, windowSize):
+        n = len(text)
+        for i in range(n - windowSize + 1):
+            str = text[i: i + windowSize]
+            self.insert(str, i)
 
-# calling benchmarking functions, without benchmarking the algorithms
-#benchmarkBST()
-#benchmarkSOA()
 
-# calling benchmarks for time and memory usage
-print("Binary Search Tree Search (100,000): ",timeit.Timer(benchmarkBST).timeit(number=1))
-print("Sequential Searching Search (100,000): ",timeit.Timer(benchmarkSOA).timeit(number=1))
+# open the text file and read in the data
+file = open("macbeth.txt")
+line = file.read()
+file.close()
+texts = line
+pat = "kings"
+
+# benchmark functions
+# benchmark brute force
+def benchmarkBF():
+    BrutalForce(texts, pat)
+# benhcmark KMP
+def benchmarkKMP():
+    KMP(texts, pat)
+# set up the Trie, so we don't benchmark the creation of the tree, only the searching
+trie1 = Trie()
+trie1.patchInsert(texts, len(pat))
+# benchmark the trie search
+def becnhmarkTrie1():
+    n = trie1.search(pat)
+    """if n is None:
+        print("not found")
+    else:
+        print("found at ", n.index)"""
+# benchmark trie, including the setup
+def benchmarkTrie2():
+    trie2 = Trie()
+    trie2.patchInsert(texts, len(pat))
+    n = trie2.search(pat)
+
+# timeit
+print("Trie Creation & Search Timing: ",timeit.Timer(benchmarkTrie2).timeit(number=1))
+print("Brute Force Timing: ",timeit.Timer(benchmarkBF).timeit(number=1))
+print("KMP Timing: ",timeit.Timer(benchmarkKMP).timeit(number=1))
+print("Trie Search Timing: ",timeit.Timer(becnhmarkTrie1).timeit(number=1))

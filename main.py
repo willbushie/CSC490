@@ -5,16 +5,13 @@ Objectives:
 X    1. Select a hash function (modulo or multiplication).
 X    2. Select a collision function (speration chaining or open addressing).
 X    3. Use the provided poem (read it into the program).
-    4. Insert the poem into the hash table.
-    5. Use the hash table for string searching.
+X    4. Insert the poem into the hash table.
+X    5. Use the hash table for string searching.
 """
-
-# imports
-import random
 
 # modulo for hashing and chaining for collision
 class HashTable: 
-    M = 31
+    M = 100
     def __init__(self) -> None:
         self.array = [[],] * self.M # we have 31 buckets here
 
@@ -46,6 +43,15 @@ class HashTable:
         else:
             return None
 
+    def searchString(self,string):
+        for count in range(len(self.array)):
+            for innerCount in range(len(self.array[count])):
+                if self.array[count][innerCount]["index"] == string:
+                    return True
+                elif self.array[count][innerCount]["value"] == string:
+                    return True
+        return False
+
 # read in a file and return a list
 def readFile(filename):
     with open(filename) as file:
@@ -68,9 +74,9 @@ def test2():
     list = readFile("poem.txt")
     table = HashTable()
     for index in range(len(list)):
-        table.insert(random.randint(0,30),list[index])
-    print(table.search(5))
+        table.insert(index,list[index]) # insert the items from the poem into the hash table
     for count in range(len(table.array)):
-        print(table.search(count))
+        print(table.search(count)) # print out each item from the hash table
+    print(table.searchString("and")) # print out true, if that word is contained in the table
 
 test2()

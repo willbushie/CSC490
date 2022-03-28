@@ -1,4 +1,4 @@
 #!/bin/bash
 
 caffeinate -i python main.py
-say "program completed"
+#say "program completed"

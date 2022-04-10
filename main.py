@@ -1,5 +1,13 @@
 # CSC490 - Public Key Encryption Implmenetation Assignment
 
+"""
+Objectives: 
+    X 1. Use W = (2,5,18,26,82,135,280)
+    X 2. Pick a Bible verse, encyrpt it to be a list of ints.
+    X 3. Decrypt  the int list back to English.
+    X 4. Submit a screenshot of the encryption and decryption result
+"""
+
 def inverse(a, n):
     t = 0
     newT = 1
@@ -18,7 +26,7 @@ def inverse(a, n):
 
 class PrivateSide:
     def __init__(self):
-        self.a = [1,2,5,11,32,87,141] # private key
+        self.a = [2,5,18,26,82,135,280] # using the suggested private key [1,2,5,11,32,87,141] # private key
         self.q = 1234
         self.r = 901
         self.r1 = inverse(self.r, self.q)
@@ -85,11 +93,11 @@ class TestEncryption:
         return result_str
     
 test = TestEncryption()
-test.SetInput("apple")
+test.SetInput("In the beginning God created the heavens and the earth.") # bible verse
 ciphered = test.cipher()
-print(ciphered)
+print(ciphered) # prints the encrypted text
 plainText = test.decipher(ciphered)
-print(plainText)
+print(plainText) # prints the decrypted text
 
 """ testChar = "A"
 decryption = PrivateSide()
